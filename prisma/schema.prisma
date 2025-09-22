@@ -10,6 +10,69 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id String @id @default(cuid())
+  name String?
+  email String @unique
+  emailVerified DateTime?
+  image String?
+  role Role @default(HR)
+  hrProfile HRProfile?
+  accounts Accounts[]
+  session Session[]
+}
+
+enum Role {
+  HR
+  EMPLOYEE
+  ADMIN
+}
+
+model Accounts {
+  id String @id @default(cuid())
+  userId String
+  type String
+  provider String
+  providerAccountId String
+  refresh_token String?
+  access_token String?
+  expires_at Int?
+  token_type String?
+  scope String?
+  id_token String?
+  session_state String?
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Session {
+  id String @id @default(cuid())
+  sessionToken String @unique
+  userId String
+  expires DateTime
+  user User @relation(fields: [userId], references: [id])
+}
+
+model HRProfile {
+  id String @id @default(cuid())
+  user User @relation(fields: [userId],references: [id])
+  userId String @unique
+  company String?
+  employees Employee[]
+}
+
+model Employee {
+  id String @id @default(cuid())
+  hrId String
+  firstName String
+  lastName String
+  email String @unique
+  position String?
+  hiredAt DateTime @default(now())
+  active Boolean @default(true)
+  hrProfile HRProfile @relation(fields: [hrId], references: [id], onDelete: Cascade)
+}
+
