@@ -3,6 +3,7 @@ CREATE TABLE `User` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NULL,
     `email` VARCHAR(191) NOT NULL,
+    `password` VARCHAR(191) NOT NULL,
     `emailVerified` DATETIME(3) NULL,
     `image` VARCHAR(191) NULL,
     `role` ENUM('HR', 'EMPLOYEE', 'ADMIN') NOT NULL DEFAULT 'HR',
