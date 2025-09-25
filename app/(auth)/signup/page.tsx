@@ -14,42 +14,78 @@ export default function SignupPage() {
   const [company, setCompany] = useState("");
   const [error, setError] = useState("");
 
-  //   async function handleSubmit(e: React.FormEvent) {
-  //     e.preventDefault()
-  //     const res = await fetch("/api/signup", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ email, password, name, company }),
-  //     })
-  //     if (res.ok) {
-  //       router.push("/login")
-  //     } else {
-  //       const data = await res.json()
-  //       setError(data.error || "Failed to sign up")
-  //     }
-  //   }
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    setError(""); // clear previous errors
+
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password, company }),
+      });
+
+      if (res.ok) {
+        router.push("/login"); // redirect to login page
+      } else {
+        const data = await res.json();
+        setError(data.error || "Failed to sign up");
+      }
+    } catch (err) {
+      setError("Failed to connect to server");
+      console.error(err);
+    }
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center">
-      <form className="w-full max-w-md space-y-4 rounded-xl border p-6 shadow">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-md space-y-4 rounded-xl border p-6 shadow"
+      >
         <h1 className="text-2xl font-bold">Sign Up</h1>
         {error && <p className="text-sm text-red-500">{error}</p>}
+
         <div>
-          <Label className=" mb-5">Name</Label>
-          <Input type="input" required />
+          <Label className="mb-2">Name</Label>
+          <Input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
         </div>
+
         <div>
-          <Label className=" mb-5">Email</Label>
-          <Input type="email" required />
+          <Label className="mb-2">Email</Label>
+          <Input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
         </div>
+
         <div>
-          <Label className=" mb-5">Password</Label>
-          <Input type="password" required />
+          <Label className="mb-2">Password</Label>
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
         </div>
+
         <div>
-          <Label className=" mb-5">Company</Label>
-          <Input type="input" />
+          <Label className="mb-2">Company</Label>
+          <Input
+            type="text"
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+          />
         </div>
+
         <Button type="submit" className="w-full">
           Create Account
         </Button>
